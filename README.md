@@ -1,12 +1,12 @@
 # YouTubeNow
 Watch YouTube videos with friends
 ## Setup
-1. Download [nodejs](https://nodejs.org/en/)
-2. Then run...
+Download [nodejs](https://nodejs.org/en/) and move to YouTubeNow folder
+Run this...
 ```
  npm install --save express@4.10.2
 ```
-3. And then do...
+And then do...
 ```
 npm install --save socket.io
 ```
