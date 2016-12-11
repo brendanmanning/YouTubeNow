@@ -40,6 +40,8 @@
 			  	{
 			  		showError404();
 			  	} else {
+					document.getElementById("joindiv").hidden = false;
+					document.getElementById("loadingdiv").hidden = true;
 			  		if(name == "") { name = "Unnamed Group"; }
 			  		if(creator == "") { creator = "Anonymous"; }
 			  		document.getElementById("roomname").innerHTML = "Join " + name;
@@ -115,6 +117,7 @@
 			  }
 			  function onpageload()
 			  {
+				document.getElementById("joindiv").hidden = true;
 			  	if(paramset("id"))
 			  	{
 			  		socket.emit("getRoomInfo", param("id"))
@@ -222,6 +225,7 @@
 	<body onload="onpageload();">
 		<center>
 			<div id="bannerdiv"></div>
+			<div id="loadingdiv"><h1>Loading...</h1></div>
 			<div id="joindiv">
 				<h2>YouTube Now</h2>
 				<h4 id="roomname">Join Room</h4>
