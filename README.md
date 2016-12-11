@@ -8,4 +8,10 @@ Then run...
    ```
 And then do...
    ``` shell
-   
+ npm install --save socket.io
+    ```
+Finally (inside YouTubeNow directory)...
+   ```zsh
+node start index.js
+   ```
+Open [http://localhost:8080](http://localhost:8080) and pour youself some ☕
