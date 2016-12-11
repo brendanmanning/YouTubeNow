@@ -1,12 +1,12 @@
 # YouTubeNow
 Watch YouTube videos with friends
 ## Setup
-Download [nodejs](https://nodejs.org/en/)
-Then run...
+1. Download [nodejs](https://nodejs.org/en/)
+2. Then run...
 ```
  npm install --save express@4.10.2
 ```
-And then do...
+3. And then do...
 ```
 npm install --save socket.io
 ```
