@@ -1,0 +1,49 @@
+<!-- TEMPLATE
+
+	BASE ALL PAGES ON THIS. IT INCLUDES THE CUSTOM BUTTONS AND STUFF 
+	-->
+
+<html>
+	<head>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mu/0.3.0/mu.min.css" />
+		<script src="/socket.io/socket.io.js"></script>
+		
+		<style>
+			button.primary {
+ 				color: #19e;
+				background: #fff;
+			}
+			button.large {
+  				font-size: 18px;
+  				padding: 15px 32px;
+			}
+			button.round {
+  		  		border-radius: 6px;
+			}
+			button.outline {
+ 				text-transform: uppercase;
+				border: 2px solid #19e;
+			}
+			button:hover {
+				background: #19e;
+				color: #fff;
+				border: 2px solid #fff;
+			}
+		</style>
+		
+		<script>
+			  var socket = io();
+
+			  socket.on("msg", function(message) {
+			  	alert(message);
+			  });
+		</script>
+		<title>Youtube.Now</title>
+	</head>
+
+	<body>
+		<center>
+			
+		</center>
+	</body>
+</html>

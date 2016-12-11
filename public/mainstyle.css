@@ -1,0 +1,120 @@
+button.primary {
+ 	color: #19e;
+	background: #fff;
+	text-transform: uppercase;
+	border: 2px solid #19e;
+}
+button.large {
+  	font-size: 18px;
+  	padding: 15px 32px;
+}
+button.round {
+  	border-radius: 6px;
+}
+button.primary:hover {
+	background: #19e;
+	color: #fff;
+	border: 2px solid #fff;
+}
+button.destructive {
+	color: #C40500;
+	background: #fff;
+	border: 2px solid #C40500;
+	text-transform: uppercase;
+}
+button.destructive:hover {
+	background: #C40500;
+	color: #fff;
+	border: 2px solid #fff;;
+}
+p.blue {
+	color: #19e;
+}
+button.bar {
+	width: 100%;
+}
+/* Banner Popup Code */
+div.banner {
+	background: #E0DFE0;
+	font-size: 18px;
+	padding: 15px 32px;
+	border-radius: 4px;
+	width: 100%;
+	height: 65px;
+	/* Fuck cross browser compadibility */
+	-webkit-animation-name: appear;
+	-webkit-animation-duration: 3s;
+	animation-name: appear;
+	animation-duration: 3s;
+}
+div.warning {
+	color: #C40500;
+	border: 6px solid #C40500;
+}
+div.informational {
+	color: #19e;
+	border: 6px solid #19e;
+}
+div.banner:hover {
+ 	transform: scale(1.05);
+}
+@keyframes appear {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1.0;
+	}
+}
+@-webkit-keyframes appear {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1.0;
+	}
+}
+@keyframes scaleUp {
+	from {
+		transform: scale(1);
+	}
+	to {
+		transform: scale(1.25);
+	}
+}
+@-webkit-keyframes scaleUp {
+	from {
+		transform: scale(1);
+	}
+	to {
+		transform: scale(1.25);
+	}
+}
+/* End Banner Popup Code */
+div.messageContainer {
+	border: 2px solid #19e;
+}
+input {
+	border: none;
+	border-bottom: solid 2px #031E2E;
+	transition: border 0.3s;
+	color: #000;
+}
+input:focus,
+input.focus {
+	border-bottom: solid 3px #19e;
+	color: #19e;
+}
+input.bar {
+	width: 100%;
+}
+ul.messages {
+	list-style-type: none;
+	border: 2px solid #19e;
+	height: 200px; 
+	overflow: auto;
+}
+li.message {
+	font-size: 10px;
+	text-align: left;
+}

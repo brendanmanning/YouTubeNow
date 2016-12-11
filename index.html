@@ -1,0 +1,43 @@
+<html>
+	<head>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mu/0.3.0/mu.min.css" />
+		<script src="/socket.io/socket.io.js"></script>
+		<link rel="stylesheet" href="mainstyle.css" />
+		
+		<script>
+			  var socket = io();
+
+			  socket.on("msg", function(message) {
+			  	alert(message);
+			  });
+
+			  socket.on('created', function(id) {
+			  	window.location = "/play?id=" + id;
+			  })
+
+			  // UI Handling
+			  function ui_makeRoomButton()
+			  {
+			  	socket.emit('makeroom', document.getElementById("video").value, document.getElementById("yourname").value, document.getElementById("groupname").value);
+			  }
+		</script>
+		<title>Youtube.Now</title>
+	</head>
+
+	<body>
+		<center>
+			<h1>Youtube Now</h1>
+			<h4><i>Watch YouTube with friends!</i></h4>
+			<hr>
+			<i><strong>* A YouTube video link: </strong><input type="text" placeholder="https://www.youtube.com/watch?v=KMU0tzLwhbE" id="video" size="43"> 
+			<br>
+			<strong>Your name: </strong><input type="text" placeholder="Morgan Freeman (God)" id="yourname" size="43">
+			<br>
+			<strong>Group name: </strong></i><input type="text" placeholder="God (Morgan Freeman) movie group" id="groupname" size="43">
+			<br>
+			<br>
+			<button class="primary large round" onclick="ui_makeRoomButton()">Watch Now</button>
+			<br>
+			<p>Fields marked * are required</p>
+	</body>
+</html>

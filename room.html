@@ -1,0 +1,280 @@
+<!-- TEMPLATE
+
+	BASE ALL PAGES ON THIS. IT INCLUDES THE CUSTOM BUTTONS AND STUFF 
+	-->
+
+<html>
+	<head>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mu/0.3.0/mu.min.css" />
+		<link rel="stylesheet" href="mainstyle.css" />
+		<script src="/socket.io/socket.io.js"></script>
+		<script src="lib/urlparameters.js"></script>
+		<script src="lib/popup.js"></script>
+		<script src="https://www.youtube.com/iframe_api"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+		
+		<script>
+
+
+			/* IMPORTANT, GET A YOUTUBE API KEY from console.developers.google.com to allow users to search for videos */
+			var api_key = "Your api key here...";
+			var urls = [];
+			var backupdisplaystyle;
+
+			var player = null;
+			var videotoload = null;
+			var timetoload = 0;
+			  var socket = io();
+
+			  socket.on("msg", function(message) {
+			  	showBanner(message, document.getElementById("bannerdiv"));
+			  });
+
+			  socket.on("joined", function() {
+			  	document.getElementById("joindiv").innerHTML = "";
+			  	document.getElementById("maindiv").style.visibility = 'visible';
+			  });
+
+			  socket.on("roominfo", function(name,creator, is404) {
+			  	if(is404)
+			  	{
+			  		showError404();
+			  	} else {
+			  		if(name == "") { name = "Unnamed Group"; }
+			  		if(creator == "") { creator = "Anonymous"; }
+			  		document.getElementById("roomname").innerHTML = "Join " + name;
+			  		document.getElementById("creatorname").innerHTML = "Created by <strong>" + creator + "</strong>";
+			  		document.getElementById("roomtitle").innerHTML = "Group: " + name + " - <a href='/'>Go Home</a>";
+			  	}
+			  });
+
+			  socket.on("video", function(id, time) {
+			  	if(player)
+			  	{
+			  		player.loadVideoById("" + id, 0);
+			  	} else {
+			  		videotoload = id;
+			  		timetoload = time;
+			  	}
+			  });
+
+			  socket.on("pause", function()
+			  {
+			  	player.pauseVideo();
+			  	document.getElementById("ppbutton").innerHTML = "Play Video!";
+			  });
+
+			  socket.on("unpause", function() {
+			  	player.playVideo();
+			  	document.getElementById("ppbutton").innerHTML = "Pause Video!";
+			  });
+
+			  socket.on("users", function(htmlcontent) {
+			  	document.getElementById("usershere").innerHTML = htmlcontent;
+			  });
+
+			  socket.on("serverRequestsSync", function() {
+			  	// The server wants to use this client to sync the others, comply
+			  	sendTimeSync();
+			  });
+
+			  socket.on("time", function(seconds) {
+			  	if(player)
+			  	{
+			  		player.seekTo(seconds, true);
+			  	}
+			  });
+
+			  socket.on("chatmessage",function(name,msg){
+			  	document.getElementById("messages").innerHTML.replaceAll('<li tabindex=\"1\">', "<li>");
+			  	document.getElementById("messages").innerHTML += "<li class=\"message\"><strong>" + name + "</strong>: " + msg + "</li>";
+			  	$('#messages').animate({scrollTop: $('#messages').prop("scrollHeight")}, 500);
+			  });
+
+			  function toggleStatus()
+			  {
+			  	if(player.getPlayerState() == 1)
+			  	{
+			  		// playing
+			  		socket.emit('pause', param("id"))
+			  	} else if(player.getPlayerState() == 2)
+			  	{
+			  		// paused
+			  		socket.emit('play', param("id"))
+			  	} else {
+			  		// something else
+			  		alert("You must be playing a video or have one paused to do that");
+			  	}
+			  }
+
+			  function showError404()
+			  {
+					document.getElementById("notfounddiv").style.visibility = 'visible';
+			  		document.getElementById("joindiv").innerHTML = "";
+			  		document.getElementById("maindiv").innerHTML = "";
+			  }
+			  function onpageload()
+			  {
+			  	showBanner("Hello world", document.getElementById("bannerdiv"));
+			  	if(paramset("id"))
+			  	{
+			  		socket.emit("getRoomInfo", param("id"))
+			  		document.getElementById("notfounddiv").style.visibility = 'hidden';
+			  		document.getElementById("maindiv").style.visibility = 'hidden';
+			  	} else {
+			  		showError404();
+			  	}
+			  }
+
+			  // 404 Butotn Handlers
+			  function goHome()
+			  {
+			  	window.location = "/";
+			  }
+			// UI Handlers
+			function ui_joinRoom()
+			{
+				socket.emit('joinroom', param("id"), document.getElementById("nicknameinput").value);
+			}
+			function ui_newVideo()
+			{
+				if(document.getElementById("newvideo").value != "" && document.getElementById("newvideo").value != null)
+				{
+
+					socket.emit('changevideo', document.getElementById("newvideo").value, param("id"));
+				}
+			}
+			function playvideo(videonumber)
+			{
+				if(urls.length >= videonumber)
+				{
+					socket.emit('changevideo', urls[videonumber], param("id"));
+					closeSearch();
+				}
+			}
+		function onYouTubeIframeAPIReady() {
+			player = new YT.Player('ytplayer');
+			if(videotoload)
+			{
+				player.loadVideoById("" + videotoload, timetoload);
+			}
+		}
+
+		function closeSearch()
+		{
+			document.getElementById("playerdiv").style.display = backupdisplaystyle
+			document.getElementById("searchdiv").innerHTML = "";
+		}
+
+		function sendTimeSync()
+		{
+			if(player)
+			{
+				socket.emit('synctimes', player.getCurrentTime(), player.getVideoData()['video_id'], param("id"));
+			}
+		}
+
+		function sendMessage()
+		{
+			socket.emit('sendmessage', document.getElementById("messageinput").value);
+		}
+
+		function searchYT()
+		{
+			backupdisplaystyle = document.getElementById("playerdiv").style.display;
+			document.getElementById("playerdiv").style.display = "none";
+			$.getJSON('https://www.googleapis.com/youtube/v3/search?part=snippet&q=' + document.getElementById('searchbox').value + '&key=' + api_key + '&maxResults=20', function(data) {
+					var titles = [];
+					var thumbnails = [];
+					var descriptions = [];
+					urls = [];
+					var searchdivhtml = "<br><button onclick=\"closeSearch()\">Close Search Results</button><table><thead><tr><th></th><th></th><th></th><th></th></thead><tbody>";
+					for(var i = 0; i < data.items.length; i++)
+					{
+						if(data.items[i].id.kind == "youtube#video")
+						{
+							searchdivhtml += "<tr>"
+							searchdivhtml += "<td><button onclick='playvideo(" + i + ")' class='primary'>Play</button></td>";
+							searchdivhtml += "<td><strong>" + data.items[i].snippet.title + "</strong></td>";
+							searchdivhtml += "<td><i>" + data.items[i].snippet.description + "</i></td>"
+							searchdivhtml += "<td><img src=\"" + data.items[i].snippet.thumbnails.default.url + "\"></td>";
+
+							urls.push("https://www.youtube.com/watch?v=" + data.items[i].id.videoId);
+						} else {
+							// If we only push to the array for videos (we hide everything else), the urls array and button indexes will get mismatched.
+							// So if we hide a link, put the developers developers developers video link at it's index in the array
+							// (its a good video don't judge)
+							urls.push("https://www.youtube.com/watch?v=KMU0tzLwhbE");
+						}
+					}
+
+					document.getElementById("searchdiv").innerHTML = searchdivhtml;
+			});
+		}
+
+		String.prototype.replaceAll = function(search, replacement) {
+   			 var target = this;
+    		 return target.split(search).join(replacement);
+		};
+      </script>
+		<title>Youtube.Now</title>
+	</head>
+
+	<body onload="onpageload();">
+		<center>
+			<div id="bannerdiv"></div>
+			<div id="joindiv">
+				<h2>YouTube Now</h2>
+				<h4 id="roomname">Join Room</h4>
+				<p class="blue" id="creatorname">(name)</p>
+				<input type="text" size="35" placeholder="Choose a nickname" id="nicknameinput">
+				<br>
+				<br>
+				<button class="primary large round outline" onclick="ui_joinRoom()">Join Room</button>
+			</div>
+			<div id="maindiv">
+				<h3 id="roomtitle">___ Room Name ___</h3>
+				<hr>
+				<strong>Search for a video</strong>
+				<br>
+				<input type="text" placeholder="Search" id="searchbox"><button onclick="searchYT()">Search</button>
+				<div id="playerdiv">
+					<br>
+					<strong>Play a new video</strong><br><input type="text" placeholder="http://www.youtube.com/watch?v=xxxxxxxxxxx" id="newvideo"><button type="primary round outline" onclick="ui_newVideo()">Play It!</button>
+					<br>
+					<br>
+					<button class="primary" id="ppbutton" onclick="toggleStatus()">Pause Video!</button> <button class="destructive" onclick="sendTimeSync()">Sync all players with mine</button>
+					<iframe type="text/html" width="640" height="390" src="http://www.youtube.com/embed/KMU0tzLwhbE?controls=0&disablekb=1&enablejsapi=1&frameborder="0" id="ytplayer"></iframe>
+					<br>
+					<h2>Social Features</h2>
+					<hr>
+					<div class="row">
+						<div class="c g2">
+								<h5>Users here now</h5>
+								<hr>
+							<ul id="usershere">
+								<li>Nobody (you have no friends)</li>
+							</ul>
+						</div>
+						<div class="c g2">
+							<h5>Group Chat</h5>
+							<hr>
+							<ul id="messages" class="messages">
+							</ul>
+						</div>
+						<div class="c g2 m2">
+							<input type="text" placeholder="Say something here" class="bar" id="messageinput">
+							<button class="primary bar" onclick="sendMessage()">Send Message!</button>
+						</div>
+					</div>
+				</div>
+				<div id="searchdiv">
+				</div>
+			</div>
+			<div id="notfounddiv">
+				<h1>Group not found (404)</h1>
+				<i>Would you like to make your own?</i> <button class="primary round" onclick="goHome()">Heck yea!</button>
+			</div>
+		</center>
+	</body>
+</html>
