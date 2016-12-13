@@ -5,7 +5,7 @@ Download [nodejs](https://nodejs.org/en/) then pick an option
 ### Automatic
 Run this in a Bash Shell:
 ```
-sudo su && wget https://raw.githubusercontent.com/brendanmanning/YouTubeNow/master/install.sh && chmod +x install.sh && ./install.sh
+sudo -su && wget https://raw.githubusercontent.com/brendanmanning/YouTubeNow/master/install.sh && chmod +x install.sh && ./install.sh
 ```
 ### Manual
 Run this...
