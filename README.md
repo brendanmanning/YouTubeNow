@@ -3,8 +3,9 @@ Watch YouTube videos with friends
 ## Setup
 Download [nodejs](https://nodejs.org/en/) then pick an option
 ### Automatic
+Run this in a Bash Shell:
 ```
-$ wget https://raw.githubusercontent.com/brendanmanning/YouTubeNow/master/install.sh && chmod +x install.sh && ./install.sh
+sudo wget https://raw.githubusercontent.com/brendanmanning/YouTubeNow/master/install.sh && chmod +x install.sh && ./install.sh
 ```
 ### Manual
 Run this...
