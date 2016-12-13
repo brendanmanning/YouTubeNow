@@ -1,8 +1,12 @@
 # YouTubeNow
 Watch YouTube videos with friends
 ## Setup
-Download [nodejs](https://nodejs.org/en/) and move to YouTubeNow folder
-
+Download [nodejs](https://nodejs.org/en/) then pick an option
+### Automatic
+```
+$ wget https://raw.githubusercontent.com/brendanmanning/YouTubeNow/master/install.sh && chmod +x install.sh && ./install.sh
+```
+### Manual
 Run this...
 ```
 npm install --save express@4.10.2
